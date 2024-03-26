@@ -1,25 +1,40 @@
 import sys
 input = sys.stdin.readline
 
+import heapq
+
 input = open('input.txt', 'r').readline
+
+def dijkstra(s, edges, distance):
+    pq = []
+    heapq.heappush(pq, (0, s))
+    while pq:
+        d, s = heapq.heappop(pq)
+        for to, dist in enumerate(edges[s]):
+            if dist == INF:
+                continue
+            if distance[to] > d + dist:
+                distance[to] = d + dist
+                heapq.heappush(pq, (distance[to], to))
+
+INF = 999999
 
 N, M, X = map(int, input().split())
 
-T = [[] for _ in range(N+1)]
+edges = [[INF]*(N+1) for _ in range(N+1)]
+edges_rev = [[INF]*(N+1) for _ in range(N+1)]
 for _ in range(M):
     s, e, t = map(int, input().split())
-    T[s].append((e, t))
+    edges[s][e] = t
+    edges_rev[e][s] = t
 
-time_go = [100000000] * (N+1)
+dist_go = [INF]*(N+1)
+dist_back = [INF]*(N+1)
+dist_go[X] = 0
+dist_back[X] = 0
+dijkstra(X, edges_rev, dist_go)
+dijkstra(X, edges, dist_back)
+ans = 0
 for i in range(1, N+1):
-    if i == X:
-        continue
-
-    while i != X:
-        nxt = None
-        for e, t in T[i]:
-            time_go[e] = min(time_go[e], time_go[i]+t)
-            if nxt is None or time_go[nxt] > time_go[e]:
-                nxt = e
-        i = nxt
-print(time_go)
+    ans = max(ans, dist_go[i]+dist_back[i])
+print(ans)
