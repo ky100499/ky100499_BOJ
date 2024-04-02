@@ -1,5 +1,4 @@
-ABCDE
-abcde
-01234
-FGHIJ
-fghij
+3
+26 40 83
+49 60 57
+13 89 99
