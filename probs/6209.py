@@ -3,26 +3,29 @@ input = sys.stdin.readline
 
 input = open('input.txt', 'r').readline
 
+def rmStone(arr, d):
+    cnt, st = 0, 0
+    for s in arr:
+        if s - st >= d:
+            st = s
+        else:
+            cnt += 1
+    return cnt
+
 d, n, m = map(int, input().split())
 
-ipt = [0, d]
+ipt = [d]
 for _ in range(n):
     ipt.append(int(input()))
 ipt.sort()
 
-diff = []
-for i in range(n+1):
-    diff.append(ipt[i+1] - ipt[i])
-
-for _ in range(m):
-    i = diff.index(min(diff))
-    if i == 0:
-        diff = [diff[0]+diff[1]] + diff[2:]
-    elif i == len(diff)-1:
-        diff = diff[:-2] + [diff[-2]+diff[-1]]
-    elif diff[i-1] < diff[i+1]:
-        diff = diff[:i-1] + [diff[i-1]+diff[i]] + diff[i+1:]ㄷㅌ
+l, h = 0, d
+while l <= h:
+    mid = (l+h) // 2
+    if rmStone(ipt, mid) > m:
+        h = mid-1
     else:
-        diff = diff[:i] + [diff[i]+diff[i+1]] + diff[i+2:]
+        ans = mid
+        l = mid+1
 
-print(min(diff))
+print(ans)
