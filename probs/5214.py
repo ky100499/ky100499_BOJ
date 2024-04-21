@@ -7,23 +7,31 @@ from collections import deque
 
 N, K, M = map(int, input().split())
 
-tubes = [list(map(int, input().split())) for _ in range(M)]
+edges = [[] for _ in range(N+1+M)]
 
-q = deque([(1, 1)])
-visited = {}
-while q:
-    n, d = q.popleft()
+for i in range(M):
+    for s in map(int, input().split()):
+        edges[s].append(N+1+i)
+        edges[N+1+i].append(s)
 
-    if n == N:
-        print(d)
-        break
+if N == 1:
+    print(1)
+else:
+    q = deque([(1, 1)])
+    visited = [0]*(N+M+1)
+    found = False
+    while q and not found:
+        s, d = q.popleft()
+        if visited[s]:
+            continue
+        visited[s] = 1
 
-    if n in visited:
-        continue
-    visited[n] = 1
-
-    for tube in tubes:
-        if n in tube:
-            for t in tube:
-                if t != n and t not in visited:
-                    q.append((t, d+1))
+        for t in edges[s]:
+            if t == N:
+                print(d//2+1)
+                found = True
+                break
+            if not visited[t]:
+                q.append((t, d+1))
+    if not found:
+        print(-1)
