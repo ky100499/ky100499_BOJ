@@ -1,4 +1,4 @@
-input = open('input.txt', 'r').readline
+input = open('ssafy.txt', 'r').readline
 
 def dfs(cur, par, paired):
     print(cur, par, paired)
