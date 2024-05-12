@@ -3,7 +3,7 @@ input = sys.stdin.readline
 
 input = open('input.txt', 'r').readline
 
-from heapq import heappush, heappop, heapify
+from heapq import heappush, heappop
 
 INF = 10**12
 
@@ -31,13 +31,14 @@ for _ in range(M):
         edges[a][b] = min(edges[a][b], c)
     else:
         edges[a][b] = c
-    edges[b][a] = c
+    edges[b][a] = edges[a][b]
 
-dists = [dijkstra(p) for p in P]
-m, ans = 0, 0
-for i in range(1, N+1):
-    mm = min([dists[x][i] for x in range(3)])
-    if mm > m:
-        m = mm
-        ans = i
-print(ans)
+dist = [INF]*(N+1)
+dist[0] = 0
+for p in P:
+    for i, d in enumerate(dijkstra(p)):
+        if d == INF:
+            dist[i] = 0
+        else:
+            dist[i] = min(dist[i], d)
+print(dist.index(max(dist)))
