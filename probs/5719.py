@@ -4,24 +4,25 @@ input = sys.stdin.readline
 input = open('input.txt', 'r').readline
 
 from heapq import heappush, heappop
+from collections import deque
 
 INF = 10**8
 
 def dijkstra(s, g):
     dist = [INF]*N
     dist[s] = 0
-    prev = [-1]*N
+    prev = [[] for _ in range(N)]
     pq = [(0, s)]
 
     while pq:
         _, s = heappop(pq)
-        if s == g:
-            break
         for t, d in edges[s].items():
             if dist[t] > dist[s]+d:
-                prev[t] = s
+                prev[t] = [s]
                 dist[t] = dist[s]+d
                 heappush(pq, (dist[t], t))
+            elif dist[t] == dist[s]+d:
+                prev[t].append(s)
 
     return dist, prev
 
@@ -37,17 +38,15 @@ while True:
         u, v, p = map(int, input().split())
         edges[u][v] = p
 
-    min_d = INF
-    while True:
-        dist, prev = dijkstra(S, D)
+    _, prev = dijkstra(S, D)
 
-        if dist[D] > min_d:
-            print(-1 if dist[D] == INF else dist[D])
-            break
-        else:
-            min_d = dist[D]
+    q = deque([D])
+    while q:
+        node = q.popleft()
+        for p in prev[node]:
+            if node in edges[p]:
+                edges[p].pop(node)
+                q.append(p)
 
-        node = D
-        while prev[node] != -1:
-            edges[prev[node]].pop(node)
-            node = prev[node]
+    dist, _ = dijkstra(S, D)
+    print(-1 if dist[D] == INF else dist[D])
