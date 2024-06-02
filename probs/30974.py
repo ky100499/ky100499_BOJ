@@ -14,22 +14,23 @@ def dijkstra(s):
     pq = [(0, s)]
 
     while pq:
-        _, s = heappop(pq)
+        d, s = heappop(pq)
 
         if s == N:
-            break
+            return d
 
         for t, w in edges[s].items():
             if dist[t] > dist[s]+w:
                 dist[t] = dist[s]+w
                 heappush(pq, (dist[t], t))
-    return dist
+    return -1
 
-primes = [1]*10_000_001
-for i in range(2, 10_000_001):
-    if primes[i] == 1:
+MAXD = 10_000_001
+primes = [1]*MAXD
+for i in range(2, int(MAXD**0.5)+1):
+    if primes[i]:
         j = i*i
-        while j < 10_000_001:
+        while j < MAXD:
             primes[j] = 0
             j += i
 
@@ -45,5 +46,8 @@ for _ in range(M):
             edges[u][v] = w
         edges[v][u] = edges[u][v]
 
-ans = dijkstra(1)[-1]
-print('Now where are you?' if ans == INF else ans)
+if len(edges[N]):
+    ans = dijkstra(1)
+    print('Now where are you?' if ans == -1 else ans)
+else:
+    print('Now where are you?')
