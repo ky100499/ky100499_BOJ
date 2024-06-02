@@ -19,6 +19,9 @@ def dijkstra(s):
         if s == N:
             return d
 
+        if d > dist[s]:
+            continue
+
         for t, w in edges[s].items():
             if dist[t] > dist[s]+w:
                 dist[t] = dist[s]+w
@@ -46,8 +49,5 @@ for _ in range(M):
             edges[u][v] = w
         edges[v][u] = edges[u][v]
 
-if len(edges[N]):
-    ans = dijkstra(1)
-    print('Now where are you?' if ans == -1 else ans)
-else:
-    print('Now where are you?')
+ans = dijkstra(1)
+print('Now where are you?' if ans == -1 else ans)
