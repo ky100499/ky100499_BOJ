@@ -1,61 +1,96 @@
 import sys
-from collections import deque
-
 input = sys.stdin.readline
 
-T = int(input())
+input = open('input.txt', 'r').readline
 
-for i in range(T):
+def solve(s):
+    for i in range(s, N):
+        dp[i][1] = dp[i][0]+1
+        if e[0][i-1]+e[0][i] <= W:
+            dp[i][1] = min(dp[i][1], dp[i-1][2]+1)
+
+        dp[i][2] = dp[i][0]+1
+        if e[1][i-1]+e[1][i] <= W:
+            dp[i][2] = min(dp[i][2], dp[i-1][1]+1)
+
+        dp[i+1][0] = min(dp[i][1], dp[i][2]) + 1
+        if e[0][i]+e[1][i] <= W:
+            dp[i+1][0] = min(dp[i+1][0], dp[i][0]+1)
+        if e[0][i-1]+e[0][i] <= W and e[1][i-1]+e[1][i] <= W:
+            dp[i+1][0] = min(dp[i+1][0], dp[i-1][0]+2)
+
+for i in range(int(input())):
     N, W = map(int, input().split())
 
-    enemies = []
-    for _ in range(2):
-        enemies.append(list(map(int, input().split())))
+    e = [list(map(int, input().split())) for _ in range(2)]
 
+    if N == 1:
+        print(2 if e[0][0]+e[1][0] > W else 1)
+        continue
 
-    def getIdx(row, col):
-        if col < 0: col += N
-        if col >= N: col -= N
-        idx = row * N + col
-        return idx
+    ans = 2*N
 
-    killed = []
-    cnt = 0
+    '''
+        [0]
+        X
+        X
 
-    enemies_flatten = enemies[0] + enemies[1]
+        [1]
+        O
+        X
 
-    q = deque()
-    q.append(enemies_flatten.index(max(enemies_flatten)))
+        [2]
+        X
+        O
+    '''
 
-    while len(q):
-        idx = q.popleft()
-        if idx in killed: continue
+    dp = [[0]*3 for _ in range(N+1)]
 
-        r, c = idx // N, idx % N
+    # 처음 끝 연결 X
+    dp[0] = [0, 1, 1]
+    dp[1][0] = 2 if e[0][0]+e[1][0] > W else 1
 
-        pt_next = [
-            [r, c - 1],
-            [r ^ 1, c],
-            [r, c + 1]
+    solve(1)
+
+    ans = min(ans, dp[N][0])
+
+    # 1행만 연결
+    if e[0][-1]+e[0][0] <= W:
+        dp[1] = [
+            1,
+            2,
+            1 + int(e[1][0] + e[1][1] > W),
         ]
+        dp[2][0] = min(dp[1][1], dp[1][2])+1 if e[0][1]+e[1][1] > W else dp[1][0]+1
 
-        max_idx = None
-        max_enemy = 0
-        for pt in pt_next:
-            idx_next = getIdx(*pt)
-            pt = [idx_next // N, idx_next % N]
-            if idx_next not in killed:
-                q.append(idx_next)
+        solve(2)
 
-                if enemies[r][c] + enemies[pt[0]][pt[1]] <= W \
-                    and max_enemy < enemies[pt[0]][pt[1]]:
-                        max_enemy = enemies[pt[0]][pt[1]]
-                        max_idx = idx_next
+        ans = min(ans, dp[N-1][2]+1)
 
-        killed.append(idx)
-        if max_enemy > 0:
-            # print(idx+1, max_idx+1)
-            killed.append(max_idx)
-            cnt += 1
+    # 2행만 연결
+    if e[1][-1]+e[1][0] <= W:
+        dp[1] = [
+            1,
+            1 + int(e[0][0] + e[0][1] > W),
+            2,
+        ]
+        dp[2][0] = min(dp[1][1], dp[1][2])+1 if e[0][1]+e[1][1] > W else dp[1][0]+1
 
-    print(2 * N - cnt)
+        solve(2)
+
+        ans = min(ans, dp[N-1][1]+1)
+
+    # 1 2행 모두 연결
+    if e[0][-1]+e[0][0] <= W and e[1][-1]+e[1][0] <= W:
+        dp[1] = [
+            0,
+            1,
+            1,
+        ]
+        dp[2][0] = min(dp[1][1], dp[1][2])+1 if e[0][1]+e[1][1] > W else dp[1][0]+1
+
+        solve(2)
+
+        ans = min(ans, dp[N-1][0]+2)
+
+    print(ans)
