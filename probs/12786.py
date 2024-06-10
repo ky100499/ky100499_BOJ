@@ -15,21 +15,30 @@ mv = [
 ]
 
 def dijkstra():
+    dist = [[INF]*21 for _ in range(N+1)]
+    dist[0][1] = 0
+
     pq = [(0, 0, 1)]
     while pq:
-        t, i, h = heappop(pq)
+        sd, s, h = heappop(pq)
 
-        if i == N:
-            return t
+        if dist[s][h] < sd:
+            continue
+
+        if s == N:
+            return sd
 
         needt = True
         for nh in set(map(lambda f: f(h), mv)):
-            if nh in trees[i]:
-                heappush(pq, (t, i+1, nh))
+            if nh in trees[s] and dist[s+1][nh] > sd:
+                dist[s+1][nh] = sd
+                heappush(pq, (sd, s+1, nh))
                 needt = False
-        if needt and t < K:
-            for h in trees[i]:
-                heappush(pq, (t+1, i+1, h))
+        if needt and sd < K:
+            for h in trees[s]:
+                if dist[s+1][h] > sd+1:
+                    dist[s+1][h] = sd+1
+                    heappush(pq, (sd+1, s+1, h))
     return -1
 
 N = int(input())

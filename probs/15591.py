@@ -4,21 +4,25 @@ sys.setrecursionlimit(10**8)
 
 input = open('input.txt', 'r').readline
 
-def dfs(s, k, visited, depth=0):
-    visited.add(s)
-    ret = 0
-    for t, d in edges[s]:
-        if d >= k and t not in visited:
-            ret += dfs(t, k, visited, depth+1) - (depth if ret else 0)
-    return ret if ret else depth
+INF = int(1e10)
 
 N, Q = map(int, input().split())
-edges = [[] for _ in range(N+1)]
+dist = [[INF]*(N+1) for _ in range(N+1)]
 for _ in range(N-1):
     p, q, r = map(int, input().split())
-    edges[p].append((q, r))
-    edges[q].append((p, r))
+    dist[p][q] = r
+    dist[q][p] = r
+
+print(*dist, sep='\n')
+
+for k in range(1, N+1):
+    for i in range(1, N+1):
+        for j in range(i+1, N+1):
+            if dist[i][k] != INF and dist[k][j] != INF:
+                dist[i][j] = dist[j][i] = min(dist[i][j], dist[i][k], dist[k][j])
+
+print(*dist, sep='\n')
 
 for _ in range(Q):
     k, v = map(int, input().split())
-    print(dfs(v, k, set()))
+    print(dist[v])
