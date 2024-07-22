@@ -1,25 +1,33 @@
 import sys
 input = sys.stdin.readline
 
+input = open('input.txt', 'r').readline
+
+from collections import deque
+
 for _ in range(int(input())):
-    p = map(lambda x: x, input().strip())
-    n = int(input())
-    if n:
-        X = list(map(int, input().strip()[1:-1].split(',')))
+    P = input().rstrip()
+    N = int(input())
+    if N:
+        q = deque(map(int, input().rstrip()[1:-1].split(',')))
     else:
         input()
-        X = []
+        q = deque()
 
-    idx = 0
-    for f in p:
-        if f == 'R':
-            idx = -1 if idx == 0 else 0
-        elif f == 'D':
-            if X:
-                X.pop(idx)
-            else:
+    rev = 0
+    for p in P:
+        if p == 'R':
+            rev ^= 1
+        else:
+            if not q:
                 print('error')
                 break
-    else:
-        print(f'[{",".join(map(str, X if idx == 0 else X[::-1]))}]')
 
+            if rev:
+                q.pop()
+            else:
+                q.popleft()
+    else:
+        if rev:
+            q = list(q)[::-1]
+        print(f'[{",".join(map(str, q))}]')
