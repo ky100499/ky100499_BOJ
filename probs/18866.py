@@ -6,41 +6,40 @@ input = open('input.txt', 'r').readline
 INF = int(1e10)
 
 N = int(input())
-A, B = [], []
+U, V = [], []
 for _ in range(N):
     u, v = map(int, input().split())
-    A.append(u)
-    B.append(v)
+    U.append(u)
+    V.append(v)
 
-U, V = ([[0, INF] for _ in range(N+1)] for _ in range(2))
+# Y: 젊은 날, [최소 행복, 최대 피로]
+# O: 늙은 날, [최대 행복, 최소 피로] (역순)
+# 젊은 날 조건: k일에서 Y[k][0] > O[k+1][0] and Y[k][1] < O[k+1][1]
+Y, O = [[INF, 0] for _ in range(N+2)], [[0, INF] for _ in range(N+2)]
 for i in range(1, N+1):
-    u, v = A[i-1], B[i-1]
+    u, v = U[i-1], V[i-1]
     if u:
-        U[i][0] = max(U[i-1][0], u)
+        Y[i][0] = min(Y[i-1][0], u)
     else:
-        U[i][0] = U[i-1][0]
+        Y[i][0] = Y[i-1][0]
     if v:
-        V[i][0] = max(V[i-1][0], v)
+        Y[i][1] = max(Y[i-1][1], v)
     else:
-        V[i][0] = V[i-1][0]
-for i in range(N-1, -1, -1):
-    u, v = A[i], B[i]
+        Y[i][1] = Y[i-1][1]
+for i in range(N, 0, -1):
+    u, v = U[i-1], V[i-1]
     if u:
-        U[i][1] = min(U[i+1][1], u)
+        O[i][0] = max(O[i+1][0], u)
     else:
-        U[i][1] = U[i-1][1]
+        O[i][0] = O[i+1][0]
     if v:
-        V[i][1] = min(V[i+1][1], v)
+        O[i][1] = min(O[i+1][1], v)
     else:
-        V[i][1] = V[i-1][1]
+        O[i][1] = O[i+1][1]
 
-if sum(A) == 0 and sum(B) == 0:
-    print(N-1)
+for k in range(N-1, 0, -1):
+    if Y[k][0] > O[k+1][0] and Y[k][1] < O[k+1][1]:
+        print(k)
+        break
 else:
-    ans = -1
-    for k in range(1, N):
-        if (A[k-1] == 0 or U[k][0] > U[k-1][1]) and (B[k-1] == 0 or V[k][0] < V[k][1]):
-            ans = k
-        else:
-            break
-    print(ans)
+    print(-1)
