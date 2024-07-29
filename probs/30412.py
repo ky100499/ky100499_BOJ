@@ -18,7 +18,7 @@ for i in range(1, N-1):
         if A[i] < A[i+1]:
             D[i] = min(
                 A[i+1]-A[i]+X,
-                2*(X+A[i])-A[i+1]-A[i-1]
+                X+max(A[i]+X-A[i+1], 0)
             )
         else:
             D[i] = X
@@ -26,45 +26,18 @@ for i in range(1, N-1):
         if A[i-1] > A[i]:
             D[i] = min(
                 A[i-1]-A[i]+X,
-                2*(X+A[i])-A[i+1]-A[i-1]
+                X+max(A[i]+X-A[i-1], 0)
             )
         else:
             D[i] = X
-    elif abs(A[i-1]-A[i]) >= X and abs(A[i]-A[i+1]) >= X:
-        D[i] = 0
-    elif A[i-1] <= A[i]-X:
-        D[i] = X-abs(A[i]-A[i+1])
-    elif A[i+1] <= A[i]-X:
-        D[i] = X-abs(A[i]-A[i-1])
-    elif A[i-1] >= A[i]+X:
-        if A[i] < A[i+1]:
-            D[i] = A[i]+X-A[i+1]
-        else:
-            D[i] = max(A[i+1]+2*X-A[i-1], 0) + max(A[i+1]+X-A[i], 0)
-    elif A[i+1] >= A[i]+X:
-        if A[i] < A[i-1]:
-            D[i] = A[i]+X-A[i-1]
-        else:
-            D[i] = max(A[i-1]+2*X-A[i+1], 0) + max(A[i-1]+X-A[i], 0)
-    elif A[i-1] < A[i] < A[i+1]:
-        D[i] = min(
-            A[i+1]-A[i]+X,
-            2*(X+A[i])-A[i+1]-A[i-1],
-            3*X+2*A[i-1]-A[i+1]-A[i]
-        )
-    elif A[i-1] > A[i] > A[i+1]:
-        D[i] = min(
-            A[i-1]-A[i]+X,
-            2*(X+A[i])-A[i+1]-A[i-1],
-            3*X+2*A[i+1]-A[i-1]-A[i]
-        )
     elif A[i] < A[i-1] and A[i] < A[i+1]:
-        D[i] = min(
-            max(A[i-1], A[i+1])-A[i]+X,
-            2*(X+A[i])-A[i+1]-A[i-1]
-        )
+        D[i] = max(A[i]+X-A[i-1], 0) + max(A[i]+X-A[i+1], 0)
+    elif A[i] > A[i-1] and A[i] > A[i+1]:
+        D[i] = max(max(A[i-1], A[i+1])+X-A[i], 0)
+    elif A[i-1] < A[i] < A[i+1]:
+        D[i] = max(A[i-1]+X-A[i], 0) + max(max(A[i], A[i-1]+X)+X-A[i+1], 0)
+    elif A[i-1] > A[i] > A[i+1]:
+        D[i] = max(A[i+1]+X-A[i], 0) + max(max(A[i], A[i+1]+X)+X-A[i-1], 0)
     else:
-        D[i] = max(A[i-1], A[i+1])-A[i]+X
-
-    D[i] = max(D[i], 0)
+        raise FileNotFoundError
 print(min(D))
