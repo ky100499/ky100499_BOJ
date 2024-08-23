@@ -1,10 +1,7 @@
-3
-Cat
-fat
-bAt
-4
-call
-ball
-All
-Hall
-0
+5 2
+01
+10
+01
+01
+10
+1
