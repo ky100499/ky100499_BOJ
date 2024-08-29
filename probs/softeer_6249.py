@@ -12,7 +12,7 @@ def initDNA(s, l):
                     break
             else:
                 chk |= 1<<i
-        if chk == MAX:
+        if chk == MAX-1:
             print(1)
             exit(0)
         elif chk:
@@ -23,26 +23,28 @@ def initDNA(s, l):
         initDNA(s+'g', l+1)
         initDNA(s+'c', l+1)
 
-def bt(i, c, n):
-    global ans
+def bit_count(n):
+    c = 0
+    while n:
+        c += n&1
+        n >>= 1
+    return c
 
-    if n > ans:
-        return
-    elif c == MAX:
-        ans = min(ans, n)
-    elif i < l:
-        bt(i+1, c, n)
-        bt(i+1, c|DNA[i], n+1)
+INF = int(1e6)
 
 N, M = map(int, input().split())
 G = [input().rstrip() for _ in range(N)]
-MAX = (1<<N)-1
+MAX = 1<<N
 
 DNA = []
 initDNA('', 0)
-l = len(DNA)
-print(l)
-
-ans = N
-bt(0, 0, 0)
-print(ans)
+DNA.sort(key=bit_count, reverse=True)
+DNA_f = []
+for d in DNA:
+    for fd in DNA_f:
+        if fd|d == fd:
+            break
+    else:
+        DNA_f.append(d)
+print(*map(bin, DNA_f), sep='\n')
+print(len(DNA_f))
