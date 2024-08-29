@@ -3,48 +3,54 @@ input = sys.stdin.readline
 
 input = open('input.txt', 'r').readline
 
-def initDNA(s, l):
-    if l == M:
-        chk = 0
-        for i, g in enumerate(G):
-            for j in range(M):
-                if g[j] != '.' and s[j] != g[j]:
-                    break
-            else:
-                chk |= 1<<i
-        if chk == MAX-1:
-            print(1)
-            exit(0)
-        elif chk:
-            DNA.append(chk)
-    else:
-        initDNA(s+'a', l+1)
-        initDNA(s+'t', l+1)
-        initDNA(s+'g', l+1)
-        initDNA(s+'c', l+1)
-
-def bit_count(n):
-    c = 0
-    while n:
-        c += n&1
-        n >>= 1
-    return c
-
-INF = int(1e6)
+def lastBitIndex(n):
+    i = 0
+    while n >= 1<<i:
+        if n&(1<<i):
+            return i
+        i += 1
+    return -1
 
 N, M = map(int, input().split())
 G = [input().rstrip() for _ in range(N)]
 MAX = 1<<N
 
-DNA = []
-initDNA('', 0)
-DNA.sort(key=bit_count, reverse=True)
-DNA_f = []
-for d in DNA:
-    for fd in DNA_f:
-        if fd|d == fd:
-            break
+S = ['']*MAX
+S[0] = '.'*M
+for i in range(1, MAX):
+    l = lastBitIndex(i)
+    s1, s2 = G[l], S[i^(1<<l)]
+    if s1 and s2:
+        s = ''
+        for j in range(M):
+            if s1[j] == '.':
+                s += s2[j]
+            elif s2[j] == '.':
+                s += s1[j]
+            elif s1[j] == s2[j]:
+                s += s1[j]
+            else:
+                s = ''
+                break
+        S[i] = s
+
+ans = [N]*MAX
+for i in range(1, MAX):
+    if not S[i]:
+        bits = []
+        j = 0
+        while i >= 1<<j:
+            if i&(1<<j):
+                bits.append(j)
+            j += 1
+
+        k = 0
+        for _ in range((1<<len(bits)-1)-1):
+            for bt in bits:
+                k ^= 1<<bt
+                if k & (1<<bt):
+                    break
+            ans[i] = min(ans[i], ans[k]+ans[i^k])
     else:
-        DNA_f.append(d)
-print(*map(bin, DNA_f), sep='\n')
-print(len(DNA_f))
+        ans[i] = 1
+print(ans[-1])
