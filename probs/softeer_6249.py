@@ -3,14 +3,6 @@ input = sys.stdin.readline
 
 input = open('input.txt', 'r').readline
 
-def lastBitIndex(n):
-    i = 0
-    while n >= 1<<i:
-        if n&(1<<i):
-            return i
-        i += 1
-    return -1
-
 N, M = map(int, input().split())
 G = [input().rstrip() for _ in range(N)]
 MAX = 1<<N
@@ -18,8 +10,11 @@ MAX = 1<<N
 S = ['']*MAX
 S[0] = '.'*M
 for i in range(1, MAX):
-    l = lastBitIndex(i)
-    s1, s2 = G[l], S[i^(1<<l)]
+    k = 0
+    while not i & 1<<k:
+        k += 1
+
+    s1, s2 = G[k], S[i^(1<<k)]
     if s1 and s2:
         s = ''
         for j in range(M):
