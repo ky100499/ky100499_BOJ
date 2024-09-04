@@ -1,5 +1,5 @@
 #include <iostream>
-#include <set>
+#include <queue>
 #include <vector>
 
 using namespace std;
@@ -13,13 +13,13 @@ int main()
 
     int N, M; cin >> N >> M;
 
-    set<pair<int, int>> A, B;
+    priority_queue<pair<int, int>> A, B;
     vector<int> V(N+M+1);
 
     for (int i = 1; i <= N+M; i++) {
         int v; cin >> v;
-        V[i] = v;
-        (i > N ? B : A).insert({v, i});
+        V[i] = -v;
+        (i > N ? B : A).push({-v, -i});
     }
 
     int K; cin >> K;
@@ -28,11 +28,12 @@ int main()
 
         if (q == 'U') {
             int i, v; cin >> i >> v;
-            auto& S(i > N ? B : A);
-            S.erase({V[i], i});
-            S.insert({V[i] = v, i});
+            (i > N ? B : A).push({V[i] = -v, -i});
         }
-        else
-            cout << (*A.begin()).second << ' ' << (*B.begin()).second << '\n';
+        else {
+            while (A.top().first != V[-A.top().second]) A.pop();
+            while (B.top().first != V[-B.top().second]) B.pop();
+            cout << -A.top().second << ' ' << -B.top().second << '\n';
+        }
     }
 }
