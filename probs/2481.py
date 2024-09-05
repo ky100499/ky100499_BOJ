@@ -3,7 +3,7 @@ input = sys.stdin.readline
 
 input = open('input.txt', 'r').readline
 
-from collections import deque
+from collections import deque, defaultdict as dd
 
 INF = int(1e9)
 
@@ -15,29 +15,35 @@ def bit_count(n):
     return cnt
 
 N, K = map(int, input().split())
-C = [0] + [int(input(), 2) for _ in range(N)]
+C = [0]*(N+1)
+C_idx = dd(list)
+C_set = set()
+for i in range(1, N+1):
+    ipt = int(input(), 2)
+    C[i] = ipt
+    C_idx[ipt].append(i)
+    C_set.add(ipt)
 
-codes = set(C[1:])
-
-dist = {}
+dist = {c:INF for c in C_set}
 dist[C[1]] = 0
-prev = [-1]*(N+1)
-q = deque([1])
+prev = {c:-1 for c in C_set}
+q = deque([C[1]])
 while q:
-    i = q.popleft()
-    for j in range(1, N+1):
-        if i != j and bit_count(C[i]^C[j]) == 1 and dist[i]+1 < dist[j]:
-            dist[j] = dist[i]+1
-            prev[j] = i
-            q.append(j)
+    c = q.popleft()
+    for i in range(K):
+        nc = c^(1<<i)
+        if nc in C_set and dist[nc] > dist[c]+1:
+            dist[nc] = dist[c]+1
+            prev[nc] = c
+            q.append(nc)
 
 for _ in range(int(input())):
-    q = int(input())
-    if prev[q] == -1:
+    c = C[int(input())]
+    if prev[c] == -1:
         print(-1)
     else:
         ans = []
-        while q != -1:
-            ans.append(q)
-            q = prev[q]
+        while c != -1:
+            ans.append(C_idx[c][0])
+            c = prev[c]
         print(*ans[::-1])
