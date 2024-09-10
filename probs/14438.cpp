@@ -62,9 +62,6 @@ int main()
 
     int M; cin >> M;
     while (M--) {
-        for (auto st : ST)
-            cout << st << ' ';
-        cout << '\n';
         int a, b, c; cin >> a >> b >> c;
         if (a == 1) {
             update(1, 1, N, b, c);
