@@ -7,3 +7,5 @@ activate.bat
 
 **/.DS_Store
 **/Thumbs.db
+**/.vscode
+**/input.txt
