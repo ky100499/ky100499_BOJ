@@ -1,6 +1,6 @@
 .venv
-activate.sh
-activate.bat
+*.sh
+*.bat
 *.o
 
 **/__pycache__
