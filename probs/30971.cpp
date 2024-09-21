@@ -4,15 +4,15 @@ using namespace std;
 
 int N, K, A[10], B[10], C[10], V[10] = { 0, };
 
-int bt(int i, int a, int t, int n, int c)
+int bt(int i, int t, int n)
 {
     if (n == N) return t;
     else {
         int ret = -1;
         for (int j = 0; j < N; j++) {
-            if (!V[j] && c*C[j] <= K) {
+            if (!V[j] && C[i]*C[j] <= K) {
                 V[j] = 1;
-                ret = max(ret, bt(j, A[j], t+a*B[j], n+1, C[j]));
+                ret = max(ret, bt(j, t+A[i]*B[j], n+1));
                 V[j] = 0;
             }
         }
@@ -35,7 +35,7 @@ int main()
     int ans = -1;
     for (int i = 0; i < N; i++) {
         V[i] = 1;
-        ans = max(ans, bt(i, A[i], 0, 1, C[i]));
+        ans = max(ans, bt(i, 0, 1));
         V[i] = 0;
     }
     cout << ans << '\n';
