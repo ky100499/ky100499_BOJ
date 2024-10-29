@@ -1,35 +1,26 @@
 import sys
 input = sys.stdin.readline
 
+input = open('input.txt', 'r').readline
+
 from collections import deque
 
 N, M = map(int, input().split())
-maze = []
-for _ in range(N):
-    row = []
-    for cell in input().strip():
-        row.append(ord(cell) - ord('0'))
-    maze.append(row)
+B = [list(map(int, input().rstrip())) for _ in range(N)]
 
 q = deque([(0, 0)])
-visited = {}
+V = [[0]*M for _ in range(N)]
+V[0][0] = 1
 while q:
-    i, j = q.popleft()
-    if (i, j) == (N-1, M-1):
-        print(maze[i][j])
+    x, y = q.popleft()
+
+    if x == N-1 and y == M-1:
+        print(B[x][y])
         break
-    if (i, j) in visited:
-        continue
-    visited[(i, j)] = 1
-    if i > 0 and maze[i-1][j] == 1:
-        maze[i-1][j] = maze[i][j] + 1
-        q.append((i-1, j))
-    if j > 0 and maze[i][j-1] == 1:
-        maze[i][j-1] = maze[i][j] + 1
-        q.append((i, j-1))
-    if i < N-1 and maze[i+1][j] == 1:
-        maze[i+1][j] = maze[i][j] + 1
-        q.append((i+1, j))
-    if j < M-1 and maze[i][j+1] == 1:
-        maze[i][j+1] = maze[i][j] + 1
-        q.append((i, j+1))
+
+    for dx, dy in [[0, 1], [1, 0], [0, -1], [-1, 0]]:
+        nx, ny = x+dx, y+dy
+        if 0 <= nx < N and 0 <= ny < M and B[nx][ny] and not V[nx][ny]:
+            V[nx][ny] = 1
+            B[nx][ny] = B[x][y]+1
+            q.append((nx, ny))
