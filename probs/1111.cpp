@@ -20,8 +20,28 @@ int main()
         else cout << "A\n";
     }
     else {
-        int a = A[1]/A[0], b = A[1]-A[0]*a;
-        cout << a << ' ' << b << '\n';
+        /*
+        ** y = ax + b
+        **
+        ** A[1] = aA[0]+b
+        ** A[2] = aA[1]+b
+        **
+        ** A[2] - A[1] = a(A[1] - A[0])
+        **
+        ** a = (A[2] - A[1]) / (A[1] - A[0])
+        ** b = A[1] - aA[0]
+        */
+
+        int a = A[0] == A[1] ? 1 : (A[2] - A[1]) / (A[1] - A[0]),
+            b = A[1] - a*A[0];
+
+        for (int i = 0; i < N-1; i++) {
+            if (a*A[i]+b != A[i+1]) {
+                cout << "B\n";
+                return 0;
+            }
+        }
+        cout << a*A[N-1]+b << '\n';
     }
 
     return 0;
