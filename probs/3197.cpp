@@ -8,7 +8,6 @@ using pi = pair<int, int>;
 const int MAX = 1500;
 
 int parent[MAX*MAX],
-    B[MAX][MAX] = {},
     W[MAX][MAX],
     mv[4][2] = {{0,1}, {1,0}, {0,-1}, {-1,0}};
 
@@ -33,45 +32,32 @@ int main()
     freopen("input.txt", "r", stdin);
 
     int R, C; cin >> R >> C;
-    if (R == 1 && C == 1) {
-        cout << "0\n";
-        return 0;
-    }
-    vector<pi> swans;
+    vector<int> swans;
     deque<pi> waters;
     for (int i = 0; i < R; i++) {
         for (int j = 0; j < C; j++) {
+            parent[i*C+j] = i*C+j;
             char ipt; cin >> ipt;
-            if (ipt == 'X') W[i][j] = 1;
-            else waters.emplace_back(i, j);
-            if (ipt == 'L') swans.emplace_back(i, j);
+            if (ipt == 'X') W[i][j] = -1;
+            else {
+                W[i][j] = i*C+j;
+                waters.emplace_back(i, j);
+            }
+            if (ipt == 'L') swans.push_back(i*C+j);
         }
     }
 
-    int c = 0;
-    for (int i = 0; i < R; i++) {
-        for (int j = 0; j < C; j++) {
-            if (!W[i][j] && !B[i][j]) {
-                B[i][j] = ++c;
-                queue<pi> q({{i, j}});
-                while (!q.empty()) {
-                    auto [x, y] = q.front(); q.pop();
-                    for (auto [dx, dy] : mv) {
-                        int nx = x+dx, ny = y+dy;
-                        if (in(nx, 0, R) && in(ny, 0, C) && !W[nx][ny] && !B[nx][ny]) {
-                            B[nx][ny] = c;
-                            q.emplace(nx, ny);
-                        }
-                    }
+    for (int t = 0; ; t++) {
+        for (auto [x, y] : waters) {
+            for (auto [dx, dy] : mv) {
+                int nx = x+dx, ny = y+dy;
+                if (in(nx, 0, R) && in(ny, 0, C) && W[nx][ny] != -1) {
+                    merge(W[x][y], W[nx][ny]);
                 }
             }
         }
-    }
 
-    for (int i = 1; i <= c; i++) parent[i] = i;
-
-    for (int t = 0; ; t++) {
-        if (find(B[swans[0].first][swans[0].second]) == find(B[swans[1].first][swans[1].second])) {
+        if (find(swans[0]) == find(swans[1])) {
             cout << t << '\n';
             break;
         }
@@ -80,19 +66,9 @@ int main()
             auto [x, y] = waters.front(); waters.pop_front();
             for (auto [dx, dy] : mv) {
                 int nx = x+dx, ny = y+dy;
-                if (in(nx, 0, R) && in(ny, 0, C) && W[nx][ny]) {
-                    W[nx][ny] = 0;
-                    B[nx][ny] = B[x][y];
+                if (in(nx, 0, R) && in(ny, 0, C) && W[nx][ny] == -1) {
+                    W[nx][ny] = W[x][y];
                     waters.emplace_back(nx, ny);
-                }
-            }
-        }
-
-        for (auto [x, y] : waters) {
-            for (auto [dx, dy] : mv) {
-                int nx = x+dx, ny = y+dy;
-                if (in(nx, 0, R) && in(ny, 0, C) && !W[nx][ny]) {
-                    merge(B[x][y], B[nx][ny]);
                 }
             }
         }
