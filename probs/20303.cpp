@@ -1,9 +1,10 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-using pi = pair<int, int>;
 
-int C[30001], parent[30001];
+int C[30001],
+    P[30001],
+    parent[30001];
 
 int find(int a)
 {
@@ -16,7 +17,11 @@ void merge(int a, int b)
     a = find(a);
     b = find(b);
 
-    if (a != b) parent[b] = a;
+    if (a != b) {
+        C[a] += C[b]; C[b] = 0;
+        P[a] += P[b]; P[b] = 0;
+        parent[b] = a;
+    }
 }
 
 int main()
@@ -27,31 +32,26 @@ int main()
     freopen("input.txt", "r", stdin);
 
     int N, M, K; cin >> N >> M >> K;
-    for (int i = 1; i <= N; i++) { cin >> C[i]; parent[i] = i; }
+    for (int i = 1; i <= N; i++) {
+        cin >> C[i];
+        P[i] = 1;
+        parent[i] = i;
+    }
     while (M--) {
         int a, b; cin >> a >> b;
         merge(a, b);
     }
 
-    map<int, int[2]> cnt;
+    vector<int> dp(K);
     for (int i = 1; i <= N; i++) {
-        int x = find(i);
-        cnt[x][0]++;
-        cnt[x][1] += C[i];
+        if (i == parent[i]) {
+            for (int j = K-1; j >= P[i]; j--) {
+                dp[j] = max(dp[j], dp[j-P[i]] + C[i]);
+            }
+        }
     }
 
-    vector<pi> candy;
-    for (auto [_, v] : cnt) candy.emplace_back(v[0], v[1]);
-
-    int l = candy.size();
-    vector<vector<int>> dp(l+1, vector<int>(K));
-    for (int i = 1; i <= l; i++) {
-        auto [p, c] = candy[i-1];
-        for (int j = 0; j < min(p, K); j++) dp[i][j] = dp[i-1][j];
-        for (int j = p; j < K; j++) dp[i][j] = max(dp[i-1][j], dp[i-1][j-p] + c);
-    }
-
-    cout << dp[l][K-1] << '\n';
+    cout << dp[K-1] << '\n';
 
     return 0;
 }
