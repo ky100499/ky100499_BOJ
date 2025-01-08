@@ -1,32 +1,35 @@
-from collections import deque
+def update(i, j, v):
+    x, y = i+1, j
+    while x < N:
+        B[x][y] += v
+        x += 1
+    x, y = i+1, j+1
+    while x < N and y < N:
+        B[x][y] += v
+        x += 1
+        y += 1
+    x, y = i+1, j-1
+    while x < N and y >= 0:
+        B[x][y] += v
+        x += 1
+        y -= 1
 
-N = int(input())
-
-board = [[0]*N for _ in range(N)]
-col = [0]*N
-ans = 0
-queens = deque()
-
-def nqueen(line):
+def bt(i):
     global ans
 
-    if line == N:
+    if i == N:
         ans += 1
         return
 
     for j in range(N):
-        if col[j] == 1:
-            continue
-        for qi, qj in queens:
-            di, dj = abs(qi-line), abs(qj-j)
-            if dj == 0 or di == dj:
-                break
-        else:
-            queens.append((line, j))
-            col[j] = 1
-            nqueen(line+1)
-            col[j] = 0
-            queens.pop()
+        if not B[i][j]:
+            update(i, j, 1)
+            bt(i+1)
+            update(i, j, -1)
 
-nqueen(0)
+N = int(input())
+
+B = [[0]*N for _ in range(N)]
+ans = 0
+bt(0)
 print(ans)
