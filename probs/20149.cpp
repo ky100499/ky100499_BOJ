@@ -3,6 +3,8 @@
 using namespace std;
 using ll = long long;
 
+const double ERR = 1e-8;
+
 int main()
 {
     ios_base::sync_with_stdio(0);
@@ -51,7 +53,7 @@ int main()
         double r = (double) abs(a) / (abs(a) + abs(b));
         double x = (1-r)*x3 + r*x4,
                y = (1-r)*y3 + r*y4;
-        if (min(x1, x2) <= x && x <= max(x1, x2) && min(y1, y2) <= y && y <= max(y1, y2))
+        if (min(x1, x2)-ERR <= x && x <= max(x1, x2)+ERR && min(y1, y2)-ERR <= y && y <= max(y1, y2)+ERR)
             cout << "1\n" << x << ' ' << y << '\n';
         else
             cout << "0\n";
