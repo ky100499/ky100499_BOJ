@@ -7,21 +7,22 @@ using vvi = vector<vi>;
 const int MAX = 1e4;
 
 int P[MAX+1],
-    F[MAX+1];
+    F[MAX+1],
+    id = 0;
 vi G[MAX+1];
 vvi SCC;
 stack<int> S;
 
 int dfs(int u)
 {
+    int res = P[u] = ++id;
     S.push(u);
-    P[u] = u;
     for (int v : G[u]) {
-        if (P[v] == 0) P[u] = min(P[u], dfs(v));
-        else if (!F[v]) P[u] = min(P[u], P[v]);
+        if (P[v] == 0) res = min(res, dfs(v));
+        else if (!F[v]) res = min(res, P[v]);
     }
 
-    if (P[u] == u) {
+    if (res == P[u]) {
         vi ans;
         while (1) {
             int v = S.top(); S.pop();
@@ -33,7 +34,7 @@ int dfs(int u)
         SCC.push_back(ans);
     }
 
-    return P[u];
+    return res;
 }
 
 int main()
@@ -52,8 +53,9 @@ int main()
     memset(P, 0, sizeof P);
     memset(F, 0, sizeof F);
 
-    for (int i = 0; i <= V; i++)
-        if (!F[i]) dfs(i);
+    for (int i = 1; i <= V; i++)
+        if (!P[i]) dfs(i);
+    sort(SCC.begin(), SCC.end(), [](vi a, vi b) { return a[0] < b[0]; });
 
     cout << SCC.size() << '\n';
     for (auto scc : SCC) {
