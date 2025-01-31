@@ -28,44 +28,46 @@ int main()
     sort(D, D+N, greater<pi>());
     sort(M, M+N, greater<pi>());
 
-    int a, b, c, d, s = 0, ans = 0;
+    int s = 0, ans = 0;
+    set<int> player;
     for (int x = 0; x < 11; x++) {
-        a = A[x].second;
+        player.insert(A[x].second);
         s += A[x].first;
 
         for (int y = 0; y < 11; y++) {
-            b = B[y].second;
-            if (a == b) continue;
+            if (player.find(B[y].second) == player.end()) player.insert(B[y].second);
+            else continue;
             s += B[y].first;
 
             for (int z = 0; z < 11; z++) {
-                c = C[z].second;
-                if (a == c || b == c) continue;
+                if (player.find(C[z].second) == player.end()) player.insert(C[z].second);
+                else continue;
                 s += C[z].first;
 
                 for (int w = 0; w < 11; w++) {
-                    d = D[w].second;
-                    if (a == d || b == d || c == d) continue;
+                    if (player.find(D[w].second) == player.end()) player.insert(D[w].second);
+                    else continue;
                     s += D[w].first;
 
                     int tmp = s, cnt = 0;
                     for (int i = 0; cnt < 7; i++) {
-                        if (M[i].second != a &&
-                            M[i].second != b &&
-                            M[i].second != c &&
-                            M[i].second != d) {
+                        if (player.find(M[i].second) == player.end()) {
                             tmp += M[i].first;
                             cnt++;
                         }
                     }
                     ans = max(ans, tmp);
 
+                    player.erase(D[w].second);
                     s -= D[w].first;
                 }
+                player.erase(C[z].second);
                 s -= C[z].first;
             }
+            player.erase(B[y].second);
             s -= B[y].first;
         }
+        player.erase(A[x].second);
         s -= A[x].first;
     }
 
