@@ -7,7 +7,7 @@ const int MAX = 5000,
           INF = 1e9;
 
 map<int, int> G[MAX+1];
-int A[MAX/2], B[MAX/2],
+int H[MAX+1],
     dist[MAX+1];
 
 int main()
@@ -18,8 +18,11 @@ int main()
     freopen("input.txt", "r", stdin);
 
     int N, M, J, K; cin >> N >> M >> J >> K;
-    for (int i = 0; i < K; i++) cin >> A[i];
-    for (int i = 0; i < K; i++) cin >> B[i];
+    memset(H, -1, sizeof H);
+    for (int i = 0; i < K*2; i++) {
+        int x; cin >> x;
+        H[x] = i >= K;
+    }
     while (M--) {
         int x, y, z; cin >> x >> y >> z;
         if (G[x].find(y) == G[x].end()) G[x][y] = G[y][x] = z;
@@ -28,10 +31,30 @@ int main()
 
     priority_queue<pi, vector<pi>, greater<pi>> pq; pq.emplace(0, J);
     fill(dist+1, dist+N+1, INF); dist[J] = 0;
+    int flg = 0;
     while (!pq.empty()) {
         auto [d, s] = pq.top(); pq.pop();
 
         if (dist[s] < d) continue;
+        if (H[s] == 0) {
+            cout << "A\n" << d << '\n';
+            flg = 1;
+            break;
+        }
+        else if (H[s] == 1) {
+            while (!pq.empty()) {
+                auto [w, x] = pq.top(); pq.pop();
+                if (d < w) break;
+                if (H[x] == 0) {
+                    cout << "A\n" << d << '\n';
+                    flg = 1;
+                    break;
+                }
+            }
+            if (!flg) cout << "B\n" << d << '\n';
+            flg = 1;
+            break;
+        }
 
         for (auto [t, w] : G[s]) {
             if (dist[t] > d+w) {
@@ -41,21 +64,7 @@ int main()
         }
     }
 
-    char ans; int ansd = INF;
-    for (int i = 0; i < K; i++) {
-        if (dist[A[i]] < ansd) {
-            ansd = dist[A[i]];
-            ans = 'A';
-        }
-    }
-    for (int i = 0; i < K; i++) {
-        if (dist[B[i]] < ansd) {
-            ansd = dist[B[i]];
-            ans = 'B';
-        }
-    }
-    if (ansd == INF) cout << "-1\n";
-    else cout << ans << '\n' << ansd << '\n';
+    if (!flg) cout << "-1\n";
 
     return 0;
 }

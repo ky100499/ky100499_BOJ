@@ -1,12 +1,10 @@
 #include <bits/stdc++.h>
 
-#define in(x, a, b) (a <= x && x < b)
-
 using namespace std;
 using pi = pair<int, int>;
 using ti = tuple<int, int, int>;
 
-const int MAX = 500,
+const int MAX = 502,
           INF = 1e9;
 
 char B[MAX][MAX];
@@ -25,16 +23,14 @@ int main()
 
     memset(W, 0, sizeof W);
     deque<ti> q;
-    fill(&dist[0][0], &dist[N][0], INF);
+    fill(&dist[1][0], &dist[N+1][0], INF);
 
-    for (int i = 0; i < N; i++) {
-        for (int j = 0; j < M; j++) {
+    for (int i = 1; i <= N; i++) {
+        for (int j = 1; j <= M; j++) {
             cin >> B[i][j];
             if (B[i][j] == '#') {
                 for (auto [di, dj] : mv) {
-                    int ni = i+di, nj = j+dj;
-                    if (in(ni, 0, N) && in(nj, 0, M))
-                        W[ni][nj] = 1;
+                    W[i+di][j+dj] = 1;
                 }
             }
             else if (B[i][j] == 'S') {
@@ -55,7 +51,7 @@ int main()
 
         for (auto [dx, dy] : mv) {
             int nx = x+dx, ny = y+dy;
-            if (in(nx, 0, N) && in(ny, 0, M) && B[nx][ny] != '#') {
+            if (B[nx][ny] != '#') {
                 if (W[x][y] && W[nx][ny] && d < dist[nx][ny]) {
                     dist[nx][ny] = d;
                     q.emplace_front(d, nx, ny);
