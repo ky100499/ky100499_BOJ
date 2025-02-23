@@ -18,11 +18,21 @@ int main()
     for (int i = 1; i <= N; i++) {
         for (int j = 0; j <= H; j++)
             dp[i][j] = dp[i-1][j];
+<<<<<<< HEAD
         do {
             int h; cin >> h;
             for (int j = h; j <= H; j++)
                 dp[i][j] = (dp[i][j] + dp[i-1][j-h]) % MOD;
         } while (cin.peek() != EOF && cin.peek() != '\n');
+=======
+        while (1) {
+            int h; cin >> h;
+            for (int j = h; j <= H; j++)
+                dp[i][j] = (dp[i][j] + dp[i-1][j-h]) % MOD;
+
+            if (cin.peek() == EOF || cin.peek() == '\n') break;
+        }
+>>>>>>> f80e97a4ee0f16c7dc0120765bec761af2b36c41
     }
     cout << dp[N][H] << '\n';
 
