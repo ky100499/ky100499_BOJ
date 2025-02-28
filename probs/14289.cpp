@@ -21,11 +21,16 @@ vvl mul(vvl a, vvl b)
 
 vvl power(vvl b, int e)
 {
-    if (e == 1) return b;
+    vvl ret = vvl(N, vl(N));
+    for (int i = 0; i < N; i++) ret[i][i] = 1;
 
-    vvl x = power(b, e/2);
-    if (e%2) return mul(mul(x, x), b);
-    else return mul(x, x);
+    while (e) {
+        if (e%2) ret = mul(ret, b);
+        b = mul(b, b);
+        e /= 2;
+    }
+
+    return ret;
 }
 
 int main()
