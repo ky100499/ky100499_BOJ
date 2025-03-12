@@ -22,18 +22,24 @@ int main()
     cout << ans << '\n';
 
     for (auto [k, v] : A) {
-        for (int i = 0; i < min(v, B[k]); i++) cout << k << ' ';
+        while (A[k] > B[k]) {
+            cout << k << ' ';
+            A[k]--;
+        }
     }
     for (auto [k, v] : A) {
-        for (int i = 0; i < v-B[k]; i++) cout << k << ' ';
+        for (int i = 0; i < v; i++) cout << k << ' ';
     }
     cout << '\n';
 
     for (auto [k, v] : B) {
-        for (int i = 0; i < min(v, A[k]); i++) cout << k << ' ';
+        while (B[k] > A[k]) {
+            cout << k << ' ';
+            B[k]--;
+        }
     }
     for (auto [k, v] : B) {
-        for (int i = 0; i < v-A[k]; i++) cout << k << ' ';
+        for (int i = 0; i < v; i++) cout << k << ' ';
     }
     cout << '\n';
 
