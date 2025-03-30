@@ -57,10 +57,14 @@ int main()
             x += mv[d][0]; y += mv[d][1];
 
             int s = A[x][y];
+            if (!s) continue;
+
             for (int dx = -2; dx <= 2; dx++) {
                 for (int dy = -2; dy <= 2; dy++) {
                     int nx = x+dx, ny = y+dy,
                         am = s * sand[d][2+dx][2+dy] / 100;
+                    if (!am) continue;
+
                     A[x][y] -= am;
                     if (in(nx, 0, N) && in(ny, 0, N)) A[nx][ny] += am;
                     else ans += am;

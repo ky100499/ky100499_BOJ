@@ -17,10 +17,8 @@ int main()
     fill(A, A+1111, 1e9); A[0] = 0;
     while (N--) {
         int c, p; cin >> c >> p;
-        A[p] = min(A[p], c);
-        if (p >= C) ans = min(ans, A[p]);
-        for (int i = 1; i < C; i++) {
-            if (A[i]) A[i+p] = min(A[i+p], A[i]+c);
+        for (int i = 0; i < C; i++) {
+            A[i+p] = min(A[i+p], A[i]+c);
             if (i+p >= C) ans = min(ans, A[i+p]);
         }
     }
