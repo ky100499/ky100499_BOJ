@@ -13,6 +13,29 @@ int A[MAX][MAX],
 vector<int> B[MAX][MAX];
 pi P[MAX];
 
+void white(int x, int y, int nx, int ny)
+{
+    for (int j = 0; j < B[x][y].size(); j++) {
+        B[nx][ny].push_back(B[x][y][j]);
+        P[B[x][y][j]] = {nx, ny};
+    }
+    B[x][y].clear();
+}
+
+void red(int x, int y, int nx, int ny)
+{
+    for (int j = B[x][y].size()-1; j >= 0; j--) {
+        B[nx][ny].push_back(B[x][y][j]);
+        P[B[x][y][j]] = {nx, ny};
+    }
+    B[x][y].clear();
+}
+
+bool isBlue(int x, int y, int N)
+{
+    return !in(x, 0, N) || !in(y, 0, N) || A[x][y] == 2;
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0);
@@ -38,41 +61,14 @@ int main()
             if (B[x][y].empty() || B[x][y][0] != i) continue;
 
             int nx = x+mv[D[i]][0], ny = y+mv[D[i]][1];
-            if (!in(nx, 0, N) || !in(ny, 0, N) || A[nx][ny] == 2) {
+            if (isBlue(nx, ny, N)) {
                 D[i] = 3-D[i];
                 nx = x+mv[D[i]][0]; ny = y+mv[D[i]][1];
-                if (in(nx, 0, N) && in(ny, 0, N) && A[nx][ny] != 2) {
-                    if (A[nx][ny] == 1) {
-                        for (int j = B[x][y].size()-1; j >= 0; j--) {
-                            B[nx][ny].push_back(B[x][y][j]);
-                            P[B[x][y][j]] = {nx, ny};
-                        }
-                    }
-                    else {
-                        for (int j = 0; j < B[x][y].size(); j++) {
-                            B[nx][ny].push_back(B[x][y][j]);
-                            P[B[x][y][j]] = {nx, ny};
-                        }
-                    }
-                    B[x][y].clear();
-                }
+                if (!isBlue(nx, ny, N))
+                    A[nx][ny] ? red(x, y, nx, ny) : white(x, y, nx, ny);
             }
-            else if (A[nx][ny] == 1) {
-                // Red
-                for (int j = B[x][y].size()-1; j >= 0; j--) {
-                    B[nx][ny].push_back(B[x][y][j]);
-                    P[B[x][y][j]] = {nx, ny};
-                }
-                B[x][y].clear();
-            }
-            else {
-                // White
-                for (int j = 0; j < B[x][y].size(); j++) {
-                    B[nx][ny].push_back(B[x][y][j]);
-                    P[B[x][y][j]] = {nx, ny};
-                }
-                B[x][y].clear();
-            }
+            else if (A[nx][ny] == 1) red(x, y, nx, ny);
+            else white(x, y, nx, ny);
 
             if (in(nx, 0, N) && in(ny, 0, N) && B[nx][ny].size() > 3) {
                 cout << T << '\n';
