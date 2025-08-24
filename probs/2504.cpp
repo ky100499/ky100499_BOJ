@@ -12,39 +12,39 @@ int main()
     string S; cin >> S;
 
     stack<char> P;
-    vector<int> N[20];
-    int depth = 0, valid = 1;
+    int m = 1, ans = 0, add = 0;
     for (char c : S) {
-        if (c == '(' || c == '[') {
+        if (c == '(') {
             P.push(c);
-            depth++;
+            m *= 2;
+            add = 1;
         }
-        else if (c == ')' && P.size() && P.top() == '(') {
-            int s = 0;
-            for (int n : N[depth+1]) s += n;
-            N[depth+1].clear();
-            N[depth--].push_back(s ? s*2 : 2);
-            P.pop();
+        else if (c == '[') {
+            P.push(c);
+            m *= 3;
+            add = 1;
         }
-        else if (c == ']' && P.size() && P.top() == '[') {
-            int s = 0;
-            for (int n : N[depth+1]) s += n;
-            N[depth+1].clear();
-            N[depth--].push_back(s ? s*3 : 3);
+        else if (c == ')' && !P.empty() && P.top() == '(') {
             P.pop();
+            if (add) ans += m;
+            m /= 2;
+            add = 0;
+        }
+        else if (c == ']' && !P.empty() && P.top() == '[') {
+            P.pop();
+            if (add) ans += m;
+            m /= 3;
+            add = 0;
         }
         else {
-            valid = 0;
+            ans = 0;
             break;
         }
     }
 
-    if (valid) {
-        int s = 0;
-        for (int n : N[1]) s += n;
-        cout << s << '\n';
-    }
-    else cout << "0\n";
+    if (!P.empty()) ans = 0;
+
+    cout << ans << '\n';
 
     return 0;
 }
