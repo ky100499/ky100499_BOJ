@@ -9,16 +9,11 @@ N = int(input())
 A = list(map(int, input().split()))
 
 s = deque()
-ans = deque()
+ans = [0]*N
 
-for a in reversed(A):
-    while s:
-        if s[-1] > a:
-            ans.appendleft(s[-1])
-            break
+for i in reversed(range(N)):
+    while s and s[-1] <= A[i]:
         s.pop()
-    else:
-        ans.appendleft(-1)
-
-    s.append(a)
+    ans[i] = s[-1] if s else -1
+    s.append(A[i])
 print(*ans)
