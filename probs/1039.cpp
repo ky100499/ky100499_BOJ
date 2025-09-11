@@ -11,33 +11,23 @@ int main()
 
     string N; int K; cin >> N >> K;
 
-    queue<pair<string, int>> q; q.emplace(N, 0);
-    string ans = "-1"; int l = N.size();
-    map<string, vector<int>> V; V[N].resize(K+1);
-    while (!q.empty()) {
-        auto [s, k] = q.front(); q.pop();
-
-        if (V[s][k]) continue;
-        V[s][k] = 1;
-
-        if (k == K) {
-            ans = max(ans, s);
-            continue;
-        }
-
-        for (int i = 0; i < l; i++) {
-            for (int j = i+1; j < l; j++) {
-                swap(s[i], s[j]);
-                if (s[0] != '0') {
-                    if (V.find(s) == V.end()) V[s].resize(K+1);
-                    q.emplace(s, k+1);
+    set<string> S; S.insert(N);
+    int l = N.size();
+    while (K--) {
+        set<string> tmp;
+        for (auto s : S) {
+            for (int i = 0; i < l; i++) {
+                for (int j = i+1; j < l; j++) {
+                    swap(s[i], s[j]);
+                    if (s[0] != '0') tmp.insert(s);
+                    swap(s[i], s[j]);
                 }
-                swap(s[i], s[j]);
             }
         }
+        S = tmp;
     }
 
-    cout << ans << '\n';
+    cout << (S.empty() ? "-1" : *S.rbegin()) << '\n';
 
     return 0;
 }
