@@ -8,14 +8,14 @@ const int MAX = 1e5,
 
 pi A[MAX];
 
-int dist(pi a, pi b)
-{
-    return (a.first-b.first)*(a.first-b.first) + (a.second-b.second)*(a.second-b.second);
-}
-
 int sq(int a)
 {
     return a*a;
+}
+
+int dist(pi a, pi b)
+{
+    return sq(a.first-b.first) + sq(a.second-b.second);
 }
 
 int solve(int l, int h)
@@ -25,20 +25,20 @@ int solve(int l, int h)
     int m = (l+h)/2,
         d = min(solve(l, m), solve(m+1, h));
 
-    vector<pi> tmp; tmp.push_back(A[m]);
+    vector<pi> tmp; tmp.emplace_back(A[m].second, A[m].first);
     for (int i = m-1; i >= l; i--) {
         if (sq(A[i].first - A[m].first) >= d) break;
-        tmp.push_back(A[i]);
+        tmp.emplace_back(A[i].second, A[i].first);
     }
     for (int i = m+1; i < h; i++) {
         if (sq(A[i].first - A[m].first) >= d) break;
-        tmp.push_back(A[i]);
+        tmp.emplace_back(A[i].second, A[i].first);
     }
-    sort(tmp.begin(), tmp.end(), [](pi a, pi b) { return a.second == b.second ? a.first < b.first : a.second < b.second; });
+    sort(tmp.begin(), tmp.end());
 
     for (int i = 0; i < tmp.size(); i++) {
         for (int j = i+1; j < tmp.size(); j++) {
-            if (sq(tmp[j].second - tmp[i].second) >= d) break;
+            if (sq(tmp[j].first - tmp[i].first) >= d) break;
             d = min(d, dist(tmp[i], tmp[j]));
         }
     }
