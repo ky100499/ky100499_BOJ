@@ -1,10 +1,16 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+using di = deque<int>;
 
 const int MAX = 1000;
 
-priority_queue<int> A[MAX];
+di A[MAX];
+
+void push(di &D, int n)
+{
+    D.back() < n ? D.push_back(n) : D.push_front(n);
+}
 
 int main()
 {
@@ -15,32 +21,25 @@ int main()
 
     int N, M; cin >> N >> M;
     for (int i = 0; i < N; i++) {
-        for (int j = 0; j < 2; j++) {
-            int p; cin >> p;
-            A[i].push(i ? p : -p);
-        }
+        int p; cin >> p;
+        A[i].push_back(p);
+        cin >> p;
+        A[i].back() < p ? A[i].push_back(p) : A[i].push_front(p);
     }
     if (N < M) M = N + M%N;
 
     while (M--) {
-        int p = A[0].top(); A[0].pop();
+        int p = A[0].front(); A[0].pop_front();
         for (int i = 1; i < N; i++) {
-            A[i-1].push(i-1 ? A[i].top() : -A[i].top());
-            A[i].pop();
+            push(A[i-1], A[i].back());
+            A[i].pop_back();
         }
-        A[N-1].push(-p);
+        push(A[N-1], p);
     }
 
     for (int i = 0; i < N; i++) {
-        if (i) {
-            int p = A[i].top(); A[i].pop();
-            cout << A[i].top() << ' ' << p << '\n';
-        }
-        else {
-            cout << -A[i].top() << ' ';
-            A[i].pop();
-            cout << -A[i].top() << '\n';
-        }
+        for (int p : A[i]) cout << p << ' ';
+        cout << '\n';
     }
 
     return 0;
