@@ -3,24 +3,8 @@
 using namespace std;
 using pi = pair<int, int>;
 
-int N, M;
-map<int, int> A[301][301];
-vector<pi> C;
-
-int solve(int x, int y, int m)
-{
-    if (m <= 0) return 0;
-    if (A[x][y].find(m) != A[x][y].end()) return A[x][y][m];
-
-    int ans = 0;
-    for (auto [nx, ny] : C) {
-        if (nx < x || ny < y) continue;
-        if (x == nx && y == ny) continue;
-        ans = max(ans, solve(nx, ny, m-nx-ny+x+y));
-    }
-
-    return A[x][y][m] = m+ans;
-}
+int dp[301];
+pi C[301];
 
 int main()
 {
@@ -29,10 +13,23 @@ int main()
 
     freopen("input.txt", "r", stdin);
 
-    cin >> N >> M; C.resize(N);
-    for (int i = 0; i < N; i++) cin >> C[i].first >> C[i].second;
+    int N, M; cin >> N >> M;
+    C[0] = {0,0};
+    for (int i = 1; i <= N; i++) cin >> C[i].first >> C[i].second;
+    sort(C, C+N+1);
 
-    cout << solve(0, 0, M)-M << '\n';
+    memset(dp, 0, sizeof dp);
+    for (int i = N; i > 0; i--) {
+        auto [x, y] = C[i];
+        if (x+y > M) continue;
+
+        for (int j = i-1; j >= 0; j--) {
+            auto [u, v] = C[j];
+            if (u <= x && v <= y) dp[j] = max(dp[j], dp[i]+M-x-y);
+        }
+    }
+
+    cout << dp[0] << '\n';
 
     return 0;
 }
