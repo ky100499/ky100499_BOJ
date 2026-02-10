@@ -54,26 +54,11 @@ int main()
         else {
             auto [p1, q1] = V[x];
             auto [p2, q2] = V[y];
-            ll p, q;
 
-            if (o == 'A') {
-                p = p1*q2 + p2*q1;
-                q = q1*q2;
-            }
-            else if (o == 'S') {
-                p = p1*q2 - p2*q1;
-                q = q1*q2;
-            }
-            else if (o == 'M') {
-                p = p1*p2;
-                q = q1*q2;
-            }
-            else {
-                p = p1*q2;
-                q = q1*p2;
-            }
-
-            V[A] = rdc({p, q});
+            if (o == 'A') V[A] = rdc({p1*q2 + p2*q1, q1*q2});
+            else if (o == 'S') V[A] = rdc({p1*q2 - p2*q1, q1*q2});
+            else if (o == 'M') V[A] = rdc({p1*p2, q1*q2});
+            else V[A] = rdc({p1*q2, q1*p2});
         }
     }
 
@@ -84,27 +69,22 @@ int main()
         if (M.find(A) == M.end()) continue;
 
         auto [x, y, o] = M[A];
+        auto [p1, q1] = ans[A];
+        auto [p2, q2] = V[x];
+        auto [p3, q3] = V[y];
+
         if (o == 'A') {
             ans[x] = ans[y] = ans[A];
         }
         else if (o == 'S') {
-            auto [p, q] = ans[A];
-            ans[x] = {p, q};
-            ans[y] = {-p, q};
+            ans[x] = {p1, q1};
+            ans[y] = {-p1, q1};
         }
         else if (o == 'M') {
-            auto [p1, q1] = ans[A];
-            auto [p2, q2] = V[x];
-            auto [p3, q3] = V[y];
-
             ans[x] = rdc({p1*p3, q1*q3});
             ans[y] = rdc({p1*p2, q1*q2});
         }
         else {
-            auto [p1, q1] = ans[A];
-            auto [p2, q2] = V[x];
-            auto [p3, q3] = V[y];
-
             auto [px, qx] = rdc({p1*q3, q1*p3});
             auto [pt, qt] = rdc({p2*q3, q2*p3});
             auto [py, qy] = rdc({-px*pt, qx*qt});
@@ -117,10 +97,7 @@ int main()
         q.emplace(y);
     }
 
-    for (auto [k, v] : ans) {
-        auto [p, q] = v;
-        cout << k << ' ' << p << '/' << q << '\n';
-    }
+    for (auto [k, v] : ans) cout << k << ' ' << v.first << '/' << v.second << '\n';
 
     return 0;
 }
